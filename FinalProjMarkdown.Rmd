@@ -1,0 +1,77 @@
+---
+title: "Final Project 250"
+author: "SanobarLala"
+date: "8/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+##Welcome Physicians!
+
+Through analyzing this dataset, I came across interesting relationships between different variables in this dataset that you can explore. The first visual you will see is a correlation heatmap with shows correlations for all the variables in this dataset. The second visual shows the relationship between Rest ECG and the likelihood of developing heart disease. The final visual shows you a distribution of the relationship between trestbps and heart disease for males and females (individually). I hope you can take away valuable insights from these visualizations and use it for preventative medicine!
+
+First, to provide you with the summary statistics and column names of the Data
+
+```{r data}
+data <- read.csv("datasets_33180_43520_heart.csv", header= TRUE)
+summary(data)
+colnames(data)
+```
+
+## Correlation HeatMap
+
+```{r, echo=FALSE}
+cormat <- round(cor(data),2)
+library(reshape2)
+melted_cormat <- melt(cormat)
+
+
+library(ggplot2)
+qplot(x=Var1, y=Var2, data=melt(cor(data, use="p")), fill=value, geom="tile") +
+  scale_fill_gradient2(limits=c(-1, 1)) + 
+  geom_text(aes(label=round(melt(cor(data, use="p"))$value,2))) +
+  ggtitle("Covariance matrix showing correlation coefficients in the Heart dataset")+
+  xlab("")+ 
+  ylab("")
+```
+
+Analysis of the visual: As we can clearly see from the legend, the bluer the value, the higher the correlation and the closer to brown, the negative or lower the correlation. Looking at the
+correlation with the target variable, cp (chest pain), thalach (max heart rate) and slope (peak
+exercise) have the highest correlations and rest ECG and cholesterol have the lowest
+correlations.
+
+## Barchart
+```{r, fig.width = 11, fig.asp = .62}
+counts <- table(data$restecg, data$target)
+
+barplot(counts, main="Relation of ECG measurement with the likelihood of developing of Heart Disease ",
+        xlab="Heart Disease", ylab = "Rest ECG measurement", col=c("darkblue","red", "darkgreen"), legend = TRUE, 
+        args.legend=list(title=" Rest ECG", xjust= 1),
+        beside=TRUE) 
+
+```
+
+Analysis: As we can recall, the value meaning of restecg are: Resting electrocardiographic
+measurement (0 = normal, 1 = having ST-T wave abnormality, 2 = showing probable or definite
+left ventricular hypertrophy by Estes' criteria). The above plot shows that a high number of
+patients not likely to suffer from heart diseases have restecg value 0 (normal) whereas a
+greater number of people have restecg value 1 in case of more likelihood of suffering from a
+heart disease
+
+##Boxplot
+```{r, fig.width = 10, fig.asp = .62}
+ggplot(data, aes(x=factor(target), y=trestbps, fill=factor(sex))) +
+  geom_boxplot() + scale_fill_discrete(name = "Gender", labels = c("Female", "Male"))+
+  labs(title= "Relationship between Resting Blood Pressure and Heart Disease for Males and Females",
+       y="Resting Blood Pressure (mmHg)", x = "Heart Disease")
+```
+
+Analysis: In the above Box plot between Target and tresbps and Gender, shows that Women
+have higher tresbps than men when we are looking at target variable 0, which is the likelihood
+of not developing heart disease, whereas men and women have almost equal tresbps in case of
+suffering from a heart diseases. Also, when target variable is 1 (getting heart disease), patients
+have a slightly lower tresbps in comparison to the patients who are not suffering from heart
+diseases (when target variable is 0).
