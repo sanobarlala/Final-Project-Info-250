@@ -2,7 +2,7 @@
 title: "Final Project 250"
 author: "SanobarLala"
 date: "8/25/2020"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
